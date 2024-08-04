@@ -367,4 +367,4 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  uprightForce: 10
+  uprightForce: 100

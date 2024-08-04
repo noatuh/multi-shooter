@@ -7,6 +7,8 @@ public class PlayerJump : NetworkBehaviour
 {
 	public float jumpForce = 5f;
 	private Rigidbody rb;
+	private bool canJump = true;
+	public float jumpCooldown = 1f;
 
 	// Start is called before the first frame update
 	void Start()
@@ -22,9 +24,10 @@ public class PlayerJump : NetworkBehaviour
 			return;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Space) && canJump)
 		{
 			CmdJump();
+			StartCoroutine(JumpCooldown());
 		}
 	}
 
@@ -38,5 +41,12 @@ public class PlayerJump : NetworkBehaviour
 	void RpcJump()
 	{
 		rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+	}
+
+	IEnumerator JumpCooldown()
+	{
+		canJump = false;
+		yield return new WaitForSeconds(jumpCooldown);
+		canJump = true;
 	}
 }
