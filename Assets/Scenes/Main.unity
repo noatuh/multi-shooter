@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cylinder
       objectReference: {fileID: 0}
+    - target: {fileID: 3678768061340163841, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
+      propertyPath: detectionRange
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5338405777638777708, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
       propertyPath: sceneId
       value: 2393283501
@@ -149,7 +153,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8709048314819343196, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 14.65
+      value: 20.31
       objectReference: {fileID: 0}
     - target: {fileID: 8709048314819343196, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
       propertyPath: m_LocalRotation.w
