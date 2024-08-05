@@ -1,40 +1,72 @@
 using UnityEngine;
+using Mirror;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : NetworkBehaviour
 {
-	private Vector3 spawnPosition;
-	private Vector3 targetPosition;
-	private float moveInterval = 2.0f; // Time between moves
-	private float nextMoveTime;
-	private float moveSpeed = 2.0f; // Speed of movement
+    private Transform player; // Reference to the player's transform
+    public float detectionRange = 100f; // Detection range in meters
+    public float moveSpeed = 2f; // Speed at which the enemy moves
 
-	void Start()
-	{
-		spawnPosition = transform.position;
-		SetRandomTargetPosition();
-		nextMoveTime = Time.time + moveInterval;
-	}
+    void Start()
+    {
+        if (!isServer) return;
 
-	void Update()
-	{
-		if (Time.time >= nextMoveTime)
-		{
-			SetRandomTargetPosition();
-			nextMoveTime = Time.time + moveInterval;
-		}
+        // Attempt to find the player initially
+        FindPlayer();
+    }
 
-		MoveTowardsTarget();
-	}
+    void Update()
+    {
+        if (!isServer)
+        {
+            return;
+        }
 
-	void SetRandomTargetPosition()
-	{
-		float randomX = Random.Range(-5.0f, 5.0f);
-		float randomZ = Random.Range(-5.0f, 5.0f);
-		targetPosition = new Vector3(spawnPosition.x + randomX, spawnPosition.y, spawnPosition.z + randomZ);
-	}
+        if (player == null)
+        {
+            FindPlayer();
+            return;
+        }
 
-	void MoveTowardsTarget()
-	{
-		transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-	}
+        // Calculate the distance between the enemy and the player
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        Debug.Log("Distance to player: " + distanceToPlayer);
+
+        // Check if the player is within the detection range
+        if (distanceToPlayer <= detectionRange)
+        {
+            // Move the enemy towards the player
+            Vector3 direction = (player.position - transform.position).normalized;
+            transform.position += direction * moveSpeed * Time.deltaTime;
+            Debug.Log("Moving towards player at position: " + player.position);
+        }
+        else
+        {
+            Debug.Log("Player out of range");
+        }
+    }
+
+    [ServerCallback]
+    void OnPlayerSpawned(GameObject playerObject)
+    {
+        if (playerObject.CompareTag("Player"))
+        {
+            player = playerObject.transform;
+            Debug.Log("Player found at position: " + player.position);
+        }
+    }
+
+    void FindPlayer()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+            Debug.Log("Player found at position: " + player.position);
+        }
+        else
+        {
+            Debug.Log("Player not found");
+        }
+    }
 }
