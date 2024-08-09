@@ -5,7 +5,7 @@ using Mirror;
 
 public class PlayerJump : NetworkBehaviour
 {
-	public float jumpForce = 5f;
+	public float jumpForce = 10f;
 	private Rigidbody rb;
 	private bool canJump = true;
 	public float jumpCooldown = 1f;
