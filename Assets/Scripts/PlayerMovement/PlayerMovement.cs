@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class PlayerMovement : NetworkBehaviour
+namespace MyGameNamespace
 {
-    public float moveSpeed = 3.0f;
-
-    void Update()
+    public class PlayerMovement : NetworkBehaviour
     {
-        if (isLocalPlayer)
+        public float moveSpeed = 3.0f;
+
+        void Update()
         {
-            HandleMovement();
+            if (isLocalPlayer)
+            {
+                HandleMovement();
+            }
         }
-    }
 
-    void HandleMovement()
-    {
-        // Keyboard input for movement
-        float x = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
-        float z = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
+        void HandleMovement()
+        {
+            // Keyboard input for movement
+            float x = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
+            float z = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
 
-        // Apply transformations
-        transform.Translate(x, 0, z);
+            // Apply transformations
+            transform.Translate(x, 0, z);
+        }
     }
 }
 
