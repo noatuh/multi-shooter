@@ -1,21 +1,27 @@
 using UnityEngine;
 using Mirror;
 
+[RequireComponent(typeof(Rigidbody))]
 public class EnemyAI : NetworkBehaviour
 {
-    private Transform player; // Reference to the player's transform
-    public float detectionRange = 100f; // Detection range in meters
-    public float moveSpeed = 2f; // Speed at which the enemy moves
-    public float patrolSpeed = 2f; // Speed for patrolling
+    private Transform player;
+    public float detectionRange = 5f;
+    public float moveSpeed = 2f;
+    public float patrolSpeed = 2f;
+    public float hoverHeight = 1f;
 
-    private Vector3[] patrolPoints; // Points for patrolling
-    private int currentPatrolIndex = 0; // Current patrol point index
+    private Vector3[] patrolPoints;
+    private int currentPatrolIndex = 0;
+
+    private Rigidbody rb;
 
     void Start()
     {
         if (!isServer) return;
 
-        // Initialize patrol points in a 10x10 grid around the spawn point
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false; // Disable gravity, as we manually control vertical position
+
         Vector3 startPosition = transform.position;
         patrolPoints = new Vector3[]
         {
@@ -25,16 +31,12 @@ public class EnemyAI : NetworkBehaviour
             startPosition
         };
 
-        // Attempt to find the player initially
         FindPlayer();
     }
 
     void Update()
     {
-        if (!isServer)
-        {
-            return;
-        }
+        if (!isServer) return;
 
         if (player == null)
         {
@@ -43,21 +45,17 @@ public class EnemyAI : NetworkBehaviour
 
         if (player != null)
         {
-            // Calculate the distance between the enemy and the player
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
             Debug.Log("Distance to player: " + distanceToPlayer);
 
-            // Check if the player is within the detection range
             if (distanceToPlayer <= detectionRange)
             {
-                // Move the enemy towards the player
                 MoveTowards(player.position, moveSpeed);
                 Debug.Log("Moving towards player at position: " + player.position);
                 return;
             }
         }
 
-        // Patrol if no player is detected
         Patrol();
     }
 
@@ -87,16 +85,19 @@ public class EnemyAI : NetworkBehaviour
 
     void Patrol()
     {
-        if (patrolPoints.Length == 0)
-            return;
+        if (patrolPoints.Length == 0) return;
 
         Vector3 targetPosition = patrolPoints[currentPatrolIndex];
+        
+        // Adjust target position to maintain hover height above ground
+        targetPosition.y = GetGroundHeight(targetPosition) + hoverHeight;
+
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
-        if (distanceToTarget < 0.1f)
+        if (distanceToTarget < 0.5f)
         {
-            // Move to the next patrol point
             currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+            Debug.Log("Switching to patrol point index: " + currentPatrolIndex);
         }
 
         MoveTowards(targetPosition, patrolSpeed);
@@ -106,6 +107,28 @@ public class EnemyAI : NetworkBehaviour
     void MoveTowards(Vector3 target, float speed)
     {
         Vector3 direction = (target - transform.position).normalized;
-        transform.position += direction * speed * Time.deltaTime;
+
+        // Calculate the desired velocity to move towards the target
+        Vector3 velocity = direction * speed;
+
+        // Update the Rigidbody's velocity
+        rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);
+
+        // Adjust position to maintain hover height
+        float groundHeight = GetGroundHeight(transform.position);
+        float desiredHeight = groundHeight + hoverHeight;
+        transform.position = new Vector3(transform.position.x, desiredHeight, transform.position.z);
+
+        Debug.Log("Moving towards target. Current position: " + transform.position + ", Direction: " + direction);
+    }
+
+    float GetGroundHeight(Vector3 position)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(position, Vector3.down, out hit, Mathf.Infinity))
+        {
+            return hit.point.y;
+        }
+        return position.y;
     }
 }
