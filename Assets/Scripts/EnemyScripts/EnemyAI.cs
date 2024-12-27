@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyAI : NetworkBehaviour
@@ -23,13 +24,22 @@ public class EnemyAI : NetworkBehaviour
         rb.useGravity = false; // Disable gravity, as we manually control vertical position
 
         Vector3 startPosition = transform.position;
-        patrolPoints = new Vector3[]
+
+        float randomOffsetX = Random.Range(-5f, 5f);
+        float randomOffsetZ = Random.Range(-5f, 5f);
+        Vector3 randomOffset = new Vector3(randomOffsetX, 0, randomOffsetZ);
+
+        float pathRange = 20f;
+
+        List<Vector3> randomPoints = new List<Vector3>();
+        for (int i = 0; i < 4; i++)
         {
-            startPosition + new Vector3(10, 0, 0),
-            startPosition + new Vector3(10, 0, 10),
-            startPosition + new Vector3(0, 0, 10),
-            startPosition
-        };
+            float offsetX = Random.Range(-pathRange, pathRange);
+            float offsetZ = Random.Range(-pathRange, pathRange);
+            randomPoints.Add(startPosition + new Vector3(offsetX, 0, offsetZ));
+        }
+
+        patrolPoints = randomPoints.ToArray();
 
         FindPlayer();
     }
