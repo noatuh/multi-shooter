@@ -174,6 +174,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &172138688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172138670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7acd89dd259bc645818a976b4d27e66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damageRadius: 1
+  damageAmount: 10
+  damageInterval: 1
 --- !u!1001 &271885816
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -274,6 +292,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3528338840939392606, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
       insertIndex: -1
       addedObject: {fileID: 172138682}
+    - targetCorrespondingSourceObject: {fileID: 3528338840939392606, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 172138688}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
 --- !u!1 &705507993
 GameObject:
@@ -679,6 +700,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3528338840939392606, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2038064441}
+    - targetCorrespondingSourceObject: {fileID: 3528338840939392606, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2038064448}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb4f5044bfdd5e4cb4bd3faa9174684, type: 3}
 --- !u!1 &2038064440 stripped
 GameObject:
@@ -731,6 +755,24 @@ MonoBehaviour:
   moveSpeed: 2
   patrolSpeed: 2
   hoverHeight: 1
+--- !u!114 &2038064448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038064440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7acd89dd259bc645818a976b4d27e66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damageRadius: 1
+  damageAmount: 10
+  damageInterval: 1
 --- !u!1 &2109038991
 GameObject:
   m_ObjectHideFlags: 0

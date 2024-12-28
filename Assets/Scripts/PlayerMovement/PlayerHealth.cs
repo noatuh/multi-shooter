@@ -24,7 +24,7 @@ public class PlayerHealth : NetworkBehaviour
     }
 
     [Command]
-    void CmdTakeDamage(int amount)
+    public void CmdTakeDamage(int amount)
     {
         health -= amount;
         if (health <= 0)
@@ -56,5 +56,17 @@ public class PlayerHealth : NetworkBehaviour
 
         // Display death message
         Debug.Log("Player has been shut down.");
+    }
+
+    [Server]
+    public void TakeDamage(int amount)
+    {
+        if (!isServer) return;
+
+        health -= amount;
+        if (health <= 0)
+        {
+            RpcShutdownPlayer();
+        }
     }
 }
