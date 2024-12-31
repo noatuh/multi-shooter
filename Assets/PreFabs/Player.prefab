@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 7692578297235041281}
   - component: {fileID: -6776997446870361004}
   - component: {fileID: 593512268495194846}
+  - component: {fileID: -4216376046182020230}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -402,3 +403,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &-4216376046182020230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7433711420152296488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa3214fd5742f574aae653039e55a502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  pickupDistance: 5
+  pickupKey: 101
+  pickupTag: Pickup
