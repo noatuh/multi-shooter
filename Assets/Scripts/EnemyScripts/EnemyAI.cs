@@ -47,26 +47,29 @@ public class EnemyAI : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
+        MoveTowardsPatrolPoint();
+    }
 
-        if (player == null)
+    void MoveTowardsPatrolPoint()
+    {
+        Vector3 target = patrolPoints[currentPatrolIndex];
+        Vector3 direction = (target - transform.position).normalized;
+        rb.velocity = direction * moveSpeed;
+
+        // Adjust altitude
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
         {
-            FindPlayer();
+            Vector3 adjustedPosition = transform.position;
+            adjustedPosition.y = hit.point.y + hoverHeight;
+            rb.position = adjustedPosition;
         }
 
-        if (player != null)
+        if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z),
+                             new Vector3(target.x, 0, target.z)) < 0.5f)
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            Debug.Log("Distance to player: " + distanceToPlayer);
-
-            if (distanceToPlayer <= detectionRange)
-            {
-                MoveTowards(player.position, moveSpeed);
-                Debug.Log("Moving towards player at position: " + player.position);
-                return;
-            }
+            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
         }
-
-        Patrol();
     }
 
     [ServerCallback]
