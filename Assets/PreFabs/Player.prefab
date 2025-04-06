@@ -420,4 +420,5 @@ MonoBehaviour:
   syncInterval: 0
   pickupDistance: 5
   pickupKey: 101
+  dropKey: 113
   pickupTag: Pickup
