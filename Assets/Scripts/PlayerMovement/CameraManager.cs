@@ -9,11 +9,19 @@ public class CameraManager : NetworkBehaviour
     
     [Header("Camera Settings")]
     public Vector3 cameraOffset = new Vector3(0, 0.5f, 0); // Height offset from player center
-    public float smoothTime = 0.1f; // Lower for faster response, higher for more smoothing
+    public float smoothTime = 0.25f; // Increased for more stability
+    
+    [Header("Advanced Stabilization")]
+    public int stabilizationSamples = 10; // Number of position samples to average
+    public LayerMask collisionLayers = ~0; // All layers by default
+    public float collisionOffset = 0.2f; // Distance to maintain from obstacles
     
     // Variables for smoothing
     private Vector3 currentVelocity;
     private Transform originalCameraParent;
+    private Vector3[] positionSamples;
+    private int currentSample = 0;
+    private bool samplesInitialized = false;
 
     public override void OnStartLocalPlayer()
     {
@@ -44,6 +52,9 @@ public class CameraManager : NetworkBehaviour
         // Unparent camera to prevent direct physics influence
         playerCamera.parent = null;
         playerCamera.gameObject.SetActive(true);
+        
+        // Initialize position samples array
+        positionSamples = new Vector3[stabilizationSamples];
     }
 
     public override void OnStopLocalPlayer()
@@ -71,20 +82,69 @@ public class CameraManager : NetworkBehaviour
         if (!isLocalPlayer || playerCamera == null)
             return;
         
-        // Calculate target position with offset
-        Vector3 targetPosition = transform.position + cameraOffset;
+        // Calculate stabilized position based on averaged samples
+        Vector3 targetPosition = GetStabilizedPosition();
         
-        // Smoothly move camera position
-        playerCamera.position = Vector3.SmoothDamp(
-            playerCamera.position, 
-            targetPosition, 
-            ref currentVelocity, 
+        // Apply camera collision
+        targetPosition = HandleCameraCollision(targetPosition);
+        
+        // Apply smooth damping
+        Vector3 newPosition = Vector3.SmoothDamp(
+            playerCamera.position,
+            targetPosition,
+            ref currentVelocity,
             smoothTime
         );
         
-        // Keep the camera looking at the same rotation as player's look direction
-        // We'll sync camera Y rotation with player, but keep X rotation (up/down) from PlayerLook
+        playerCamera.position = newPosition;
+        
+        // Sync rotation while preserving look-up/down angle
         Vector3 currentRotation = playerCamera.eulerAngles;
         playerCamera.rotation = Quaternion.Euler(currentRotation.x, transform.eulerAngles.y, 0);
+    }
+    
+    Vector3 GetStabilizedPosition()
+    {
+        // Add current position to samples
+        positionSamples[currentSample] = transform.position;
+        currentSample = (currentSample + 1) % stabilizationSamples;
+        
+        // If we haven't filled the array yet, initialize remaining samples
+        if (!samplesInitialized)
+        {
+            for (int i = 0; i < stabilizationSamples; i++)
+            {
+                if (positionSamples[i] == Vector3.zero)
+                    positionSamples[i] = transform.position;
+            }
+            samplesInitialized = true;
+        }
+        
+        // Average all samples
+        Vector3 averagePosition = Vector3.zero;
+        foreach (Vector3 sample in positionSamples)
+        {
+            averagePosition += sample;
+        }
+        averagePosition /= stabilizationSamples;
+        
+        // Apply offset to the averaged position
+        return averagePosition + cameraOffset;
+    }
+    
+    Vector3 HandleCameraCollision(Vector3 desiredPosition)
+    {
+        // Cast a ray from the player to the desired camera position
+        Vector3 direction = desiredPosition - transform.position;
+        float distance = direction.magnitude;
+        
+        RaycastHit hit;
+        if (Physics.SphereCast(transform.position, 0.2f, direction.normalized, out hit, distance, collisionLayers))
+        {
+            // If we hit something, position the camera at the hit point minus offset
+            return transform.position + direction.normalized * (hit.distance - collisionOffset);
+        }
+        
+        return desiredPosition;
     }
 }
