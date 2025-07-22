@@ -43,8 +43,8 @@ namespace MyGameNamespace
             float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : moveSpeed;
 
             // Keyboard input for movement
-            float x = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
+            float x = Input.GetAxisRaw("Horizontal");
+            float z = Input.GetAxisRaw("Vertical");
 
             // Store movement direction
             moveDirection = (transform.right * x + transform.forward * z).normalized * currentSpeed;
