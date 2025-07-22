@@ -47,7 +47,38 @@ public class EnemyAI : NetworkBehaviour
     void Update()
     {
         if (!isServer) return;
-        MoveTowardsPatrolPoint();
+
+        if (player != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            if (distanceToPlayer <= detectionRange)
+            {
+                ChasePlayer();
+            }
+            else
+            {
+                Patrol();
+            }
+        }
+        else
+        {
+            Patrol();
+            // Try to find the player again in case it spawned late
+            FindPlayer();
+        }
+    }
+
+    void ChasePlayer()
+    {
+        if (player == null) return;
+
+        Vector3 targetPosition = player.position;
+        
+        // Adjust target position to maintain hover height above ground
+        targetPosition.y = GetGroundHeight(targetPosition) + hoverHeight;
+
+        MoveTowards(targetPosition, moveSpeed);
+        Debug.Log("Chasing player at: " + targetPosition);
     }
 
     void MoveTowardsPatrolPoint()

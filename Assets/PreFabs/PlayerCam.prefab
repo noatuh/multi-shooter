@@ -110,6 +110,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   playerCamera: {fileID: 1070304195832496042}
+  cameraOffset: {x: 0, y: 0.5, z: 0}
+  smoothTime: 0.25
+  stabilizationSamples: 10
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  collisionOffset: 0.2
 --- !u!114 &3874158767803934533
 MonoBehaviour:
   m_ObjectHideFlags: 0
