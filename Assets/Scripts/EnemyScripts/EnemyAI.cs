@@ -136,7 +136,8 @@ public class EnemyAI : NetworkBehaviour
         // Adjust target position to maintain hover height above ground
         targetPosition.y = GetGroundHeight(targetPosition) + hoverHeight;
 
-        float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
+        // Use XZ plane distance to avoid issues with height differences
+        float distanceToTarget = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z));
 
         if (distanceToTarget < 0.5f)
         {
