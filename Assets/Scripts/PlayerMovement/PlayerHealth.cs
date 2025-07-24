@@ -8,6 +8,11 @@ public class PlayerHealth : NetworkBehaviour
     [SyncVar]
     private int health = 100;
 
+    public int GetCurrentHealth()
+    {
+        return health;
+    }
+
     void Update()
     {
         if (!isLocalPlayer) return;
