@@ -1,67 +1,109 @@
+# Multi-Shooter Game
 
-# Mirror Zombie Spawner System
-
-A flexible, networked enemy spawner for Mirror-based multiplayer games. Spawns zombies near players and despawns them when players leave the area—ideal for open-world survival games like DayZ or Unturned.
+A multiplayer survival game built using Unity and Mirror. Players must survive in a hostile environment filled with zombies, gather resources, and collaborate or compete with other players.
 
 ## Features
 
-- **Network-aware:** Spawns and despawns run on the server, synced to all clients via Mirror.
-- **Proximity-based:** Enemies spawn when players approach, despawn when players leave.
-- **Configurable:** Set spawn radii, max alive, respawn delay, and despawn timing per spawner.
-- **Ground alignment:** Spawns are raycasted to ground for natural placement.
-- **Supports spawn points:** Use explicit spawn locations or random positions within a radius.
-- **Gizmo visualization:** See activation/deactivation/spawn areas in the Scene view.
+- **Multiplayer Gameplay:** Built on Mirror for seamless networked experiences.
+- **Zombie AI:** Dynamic, proximity-based spawning and despawning of zombies.
+- **Resource Gathering:** Collect resources to craft items and survive.
+- **Base Building:** Construct shelters to protect yourself from enemies.
+- **Weapons and Combat:** A variety of weapons to defend against zombies and other players.
+- **Customizable Settings:** Adjust game parameters like zombie spawn rates, player health, and more.
 
 ## Setup
 
-1. **Zombie Prefab:**
-	 - Must have a `NetworkIdentity` and be registered in your Mirror `NetworkManager`.
-	 - Should include your movement/AI scripts (e.g., `EnemyAI`).
+1. **Clone the Repository:**
 
-2. **Player Tag:**
-	 - Your player prefab must be tagged `Player` for proximity checks to work.
+   ```bash
+   git clone <repository-url>
+   ```
 
-3. **Spawner Placement:**
-	 - In your scene, create an empty GameObject at each desired spawn area (e.g., inside buildings).
-	 - Add the `EnemySpawner` script (found in `Assets/Scripts/EnemyScripts/EnemySpawner.cs`).
-	 - Assign your zombie prefab to `enemyPrefab`.
-	 - Optionally, add child Transforms as spawn points and assign them to `spawnPoints`.
-	 - Adjust `activateRange`, `deactivateRange`, `maxAlive`, `respawnDelay`, and `despawnAfterSeconds` as needed.
+2. **Unity Version:**
+
+   - Open the project in Unity 2021.3 or later.
+
+3. **Install Dependencies:**
+
+   - Ensure Mirror is installed via Unity Package Manager.
+
+4. **Build Settings:**
+
+   - Set the build target to your desired platform (e.g., Windows, Mac, Linux).
+
+5. **Network Configuration:**
+
+   - Configure the `NetworkManager` prefab in the scene.
+
+6. **Player Prefab:**
+
+   - Ensure the player prefab is assigned in the `NetworkManager` and tagged as `Player`.
+
+## Gameplay Mechanics
+
+### Zombie Spawner System
+
+- **Proximity-based Spawning:** Zombies spawn near players and despawn when players leave the area.
+
+- **Configurable Parameters:** Adjust spawn radius, activation range, and more via the `EnemySpawner` script.
+
+### Resource Gathering
+
+- **Collectibles:** Resources like wood, stone, and metal can be gathered from the environment.
+
+- **Crafting:** Use resources to craft weapons, tools, and building materials.
+
+### Base Building
+
+- **Construction:** Build walls, doors, and other structures to create a safe base.
+
+- **Upgrades:** Strengthen your base with better materials.
+
+### Weapons and Combat
+
+- **Weapon Types:** Includes melee weapons, firearms, and explosives.
+
+- **Combat System:** Engage in combat with zombies and other players.
 
 ## Inspector Fields
 
+### EnemySpawner
+
 - `enemyPrefab`: The zombie prefab to spawn.
+
 - `spawnPoints`: (Optional) Array of Transforms for fixed spawn locations.
+
 - `maxAlive`: Maximum number of zombies alive at once per spawner.
+
 - `respawnDelay`: Time between spawns while filling up to max.
+
 - `activateRange`: Distance at which players trigger spawning.
+
 - `deactivateRange`: Distance at which despawning is considered.
+
 - `despawnAfterSeconds`: Time after last player leaves before despawning all.
+
 - `spawnRadius`: Radius for random spawn positions (if no spawn points).
+
 - `alignToGround`: Whether to raycast to ground for spawn placement.
+
 - `groundOffset`: Height offset above ground after alignment.
-
-## How It Works
-
-- When a player enters the `activateRange`, the spawner begins spawning zombies up to `maxAlive`.
-- If no players are within `deactivateRange` for `despawnAfterSeconds`, all zombies are despawned.
-- Spawns are placed at random positions within `spawnRadius` or at specified spawn points, and aligned to ground if enabled.
-
-## Extending
-
-- Add custom spawn logic, pooling, or global caps as needed.
-- For other enemy types, duplicate the spawner and assign different prefabs.
-- For more advanced ground checks, add a LayerMask to the spawner.
 
 ## Troubleshooting
 
-- **Enemies not spawning:**
-	- Ensure your prefab has a `NetworkIdentity` and is registered in `NetworkManager`.
-	- Check that your player is tagged `Player`.
-- **Spawns not aligned to ground:**
-	- Make sure `alignToGround` is enabled and your ground has colliders.
-- **Performance:**
-	- Use pooling for large numbers of spawners/enemies.
+- **Zombies Not Spawning:**
+
+  - Ensure the zombie prefab has a `NetworkIdentity` and is registered in the `NetworkManager`.
+
+  - Check that the player prefab is tagged `Player`.
+
+- **Performance Issues:**
+
+  - Use object pooling for large numbers of zombies or spawners.
+
+- **Network Issues:**
+
+  - Verify that the `NetworkManager` is correctly configured.
 
 ## License
 
